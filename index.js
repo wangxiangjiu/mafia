@@ -56,11 +56,11 @@ function onScan_game_state(err, data) {
         console.log("success");
         gameStateTable = data;
         gameArray = [];
-        recipeTable.Items.forEach(function () {
-            recipeArray.push(recipe.RecipeName);
+        gameTable.Items.forEach(function (game) {
+            gameArray.push(game.RoomId);
         });
-        recipeArray = recipeArray.map(toLower);
-        recipeList = JSON.stringify(recipeArray);
+        gameArray = gameArray.map(toLower);
+        gameList = JSON.stringify(gameArray);
     }
 }
 

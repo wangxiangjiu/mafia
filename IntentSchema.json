@@ -1,0 +1,55 @@
+{
+  "intents": [
+    {
+      "intent": "IngredientIntent",
+      "slots": [
+        {
+          "name": "ing_command",
+          "type": "LIST_OF_COMMANDS"
+        }
+      ]
+    },
+    {
+      "intent": "MainIntent",
+      "slots": [
+        {
+          "name": "item",
+          "type": "LIST_OF_ITEMS"
+        }
+      ]
+    },
+    {
+      "intent": "FoodIntent",
+      "slots": [
+        {
+          "name": "food",
+          "type": "LIST_OF_FOODS"
+        }
+      ]
+    },
+    {
+      "intent": "DirectionIntent",
+      "slots": [
+        {
+          "name": "direction",
+          "type": "LIST_OF_DIRECTIONS"
+        }
+      ]
+    },
+    {
+      "intent": "AMAZON.YesIntent"
+    },
+    {
+      "intent": "AMAZON.NoIntent"
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+    {
+      "intent": "AMAZON.StopIntent"
+    },
+    {
+      "intent": "AMAZON.CancelIntent"
+    }
+  ]
+}

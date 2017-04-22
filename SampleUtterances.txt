@@ -1,0 +1,7 @@
+IngredientIntent {ing_command}
+MainIntent {item}
+FoodIntent {food}
+FoodIntent find {food}
+FoodIntent I would like to make {food}
+DirectionIntent {direction}
+DirectionIntent what is the {direction}

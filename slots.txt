@@ -1,0 +1,4 @@
+LIST_OF_ITEMS	sushi rolls | sandwich | what can I say | quit | exit
+LIST_OF_FOODS   bacon and egg | pizza
+LIST_OF_COMMANDS   ingredients | what are the ingredients | next ingredient | next | last ingredient | last | start again | recipe menu
+LIST_OF_DIRECTIONS   read recipe |start | next step | last step | start again | main menu
