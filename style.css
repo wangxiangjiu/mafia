@@ -1,0 +1,23 @@
+.users {
+  display:flex;
+  flex-wrap: wrap;
+}
+.circle {
+  width: 250px;
+  height: 250px;
+  -webkit-border-radius: 100%;
+  -moz-border-radius: 100%;
+  border-radius: 100%;
+  background: #182165;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin: 25px 25px 0 25px;
+}
+.username {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin-bottom: 25px;
+  font-size: 1.25em;
+}
