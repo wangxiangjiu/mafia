@@ -18,7 +18,9 @@
           $.getJSON("https://p7lrmho5n7.execute-api.us-east-1.amazonaws.com/prod/RecipeUpdate?TableName=mafia",null,function(data1){
             $.each(data1.Items, function(index, user) {
               if (user.GameID == game.RoomId) {
-                if (user.Player == currID || (user.Role == "Sear" && isSear)) {
+                if (user.isKilled) {
+                    AppendTo.append("<a href='#'><span><div class='circle'><img src='img/skull.png'/></div><span class='username'>Player "+user.Player+"</span></span></a>");
+                } else if (user.Player == currID || (user.Role == "Sear" && isSear)) {
                   if (user.Role == "Werewolf") {
                     AppendTo.append("<a href='#'><span><div class='circle'><img src='img/wolf.png'/></div><span class='username'>"+user.Role+"</span></span></a>");
                   } else if (user.Role == "Villager") {
