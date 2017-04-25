@@ -7,15 +7,17 @@
 
   <!-- Loading Stuff from Lambda -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/main.js"></script>
   <script>
   var currID = 6;
   $(document).ready(function(){
-      $.getJSON("https://p7lrmho5n7.execute-api.us-east-1.amazonaws.com/prod/RecipeUpdate?TableName=Game_state",null,function(data){
+      $.getJSON("https://d8iqr83w63.execute-api.us-east-1.amazonaws.com/prod/MafiaRequest?TableName=Game_state",null,function(data){
         var AppendTo = $(".users");
         AppendTo.append(data.Items);
         // Current gets all rooms, should eventually switch to just one room
         $.each(data.Items, function(index, game) {
-          $.getJSON("https://p7lrmho5n7.execute-api.us-east-1.amazonaws.com/prod/RecipeUpdate?TableName=mafia",null,function(data1){
+          $.getJSON("https://d8iqr83w63.execute-api.us-east-1.amazonaws.com/prod/MafiaRequest?TableName=mafia",null,function(data1){
             $.each(data1.Items, function(index, user) {
               if (user.GameID == game.RoomId) {
                 if (user.isKilled) {
@@ -41,12 +43,36 @@
 </head>
 
 <body>
-  <div class="users">
-    <!--
-    <div class="circle"></div>
-    <div class="circle"></div>
-    <div class="circle"></div>
-    -->
-  </div>
+  <ul class="pages">
+    <li class="lobby page">
+      <div class="form">
+        <h3 class="title">What room do you want to join?</h3>
+        <input class="roomInput" type="text" maxlength="14" />
+      </div>
+    </li>
+    <li class="login page">
+      <div class="form">
+        <h3 class="title">What's your nickname?</h3>
+        <input class="usernameInput" type="text" maxlength="14" />
+      </div>
+    </li>
+    <li class="game page">
+      <div class="users">
+        <!--
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        -->
+      </div>
+      <div class="game area">
+        <div class ="welcome">
+        </div>
+        <div class = "broadcast">
+        </div>
+        <!-- ON JOINING, WELCOME SPECIFIC PLAYER.  -->
+      </div>
+    </li>
+  </ul>
+
 </body>
 </html>
