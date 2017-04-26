@@ -21,6 +21,11 @@ $(function() {
   var $gamePage = $('.game.page');
   var $gameMessage = $('.game.message');
   var $gameBroadcast = $('.game.broadcast');
+  var $playerArea = $(".users");
+
+
+  var otherPlayerPID = [];
+  var player = {};
 
   var username = false;
   var connected = false;
@@ -57,13 +62,51 @@ $(function() {
           "Role": roleData["Role"]}}})
     , function(data, status){
       // alert(status);
+      player.role = roleData["Role"];
+      player.pid = roleData["pid"];
+      // if (player.role == )
+      var html = getRoleHTML(player.role, "You");
+      $playerArea.append(html);
+
+
     });
 
   })
 
+  function getRoleHTML(role, username){
+    var text;
+    if (role == "Werewolf"){
+      text = "<a href='#'><span><div class='circle werewolf'><img src='img/wolf.png'/></div><span class='username'>"+username+"</span></span></a>"
+    } else if (role == "Villager") {
+      text = "<a href='#'><span><div class='circle villager'><img src='img/villager.png'/></div><span class='username'>"+username+"</span></span></a>"
+    } else if (role == "Doctor") {
+      text = "<a href='#'><span><div class='circle doctor'><img src='img/doctor.png'/></div><span class='username'>"+username+"</span></span></a>"
+    } else if (role == "Seer"){
+      text = "<a href='#'><span><div class='circle seer'><img src='img/seer.png'/></div><span class='username'>"+username+"</span></span></a>"
+    } else if (role == "unknown"){
+      text ="<a href='#'><span><div class='circle question'><img src='img/question.png'/></div><span class='username'>Player "+username+"</span></span></a>"
+    }
+    return text;
+  }
 
 
+  socket.on("player joined", function (newPlayer){
+    npName = newPlayer.username;
+    // APPEND CIRCLE THING 
 
+    if (player.role === "Werewolf"){
+      if (newPlayer.role === "Werewolf"){
+        var html = getRoleHTML("Werewolf", npName);
+        $playerArea.append(html);
+      } else {
+        var html = getRoleHTML("unknown", npName);
+        $playerArea.append(html);   
+      }
+    } else {
+      var html = getRoleHTML("unknown", npName);
+      $playerArea.append(html);
+    }
+  });
 
   function setUsername () {
     username = cleanInput($usernameInput.val().trim());
@@ -85,8 +128,21 @@ $(function() {
     }
   }
 
+  socket.on("update players", function(playerData){
+    var username = playerData[0];
+    var role = playerData[1]
+    var html;
+    if (player.role == "Werewolf"){
+      if (role == "Werewolf"){
+        html = getRoleHTML(role, username);
+      }
+    } else {
+      html = getRoleHTML("unknown", username);
+    }
+     $playerArea.append(html);
+  });
 
-  socket.on()
+
 
   function joinRoom () {
     room = cleanInput($roomInput.val().trim());
@@ -118,6 +174,7 @@ $(function() {
       if (entry["RoomId"]==room){
         data["room"] = entry["RoomId"];
         data["max"] = entry["Num_people"];
+        data.username = username;
         return data;
       }
     }
@@ -139,7 +196,32 @@ $(function() {
     }
   });
 
+  $(document).on('click', ".circle", function(event){
+    if (player.role == "Werewolf"){
+
+      // "<a href='#'><span><div class='circle seer'><img src='img/seer.png'/></div><span class='username'>"+username+"</span></span></a>"
+
+
+      if ($(event.target).attr('class') != "circle werewolf"){
+        $(this).find("img").attr('src', 'img/skull.png');
+      }
+    }
+    // }
+    // console.log($(event.target).attr('class'));
+  });
+
+  // $(".circle").click(function(event){
+  //   console.log(event);
+  // });
+  // if (player.role == "Werewolf"){
+      
+  //   } else {
+
+  //   }
+  // });
 
 });
+
+
 
 
