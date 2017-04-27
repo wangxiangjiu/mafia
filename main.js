@@ -203,7 +203,7 @@ $(function() {
 
 
       if ($(event.target).attr('class') != "circle werewolf"){
-        $(this).find("img").attr('src', 'img/skull.png');
+        $(this).find("img").attr('src', 'img/wskull.png');
       }
     }
     // }
