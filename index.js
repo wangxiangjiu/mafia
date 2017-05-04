@@ -12,7 +12,7 @@ var appId = 'amzn1.ask.skill.fc1040ab-fb4d-498e-80da-c762ff72c0ec';
 //dynamo.scan({TableName: "mafia"}, onScan);
 //var recipeArray = "dummy text";
 //var recipeList = "";
-var room_number = 10;
+var room_number = Math.floor(random(1, 1000));
 // function toLower(x) {
 //     return x.toLowerCase();
 // }
@@ -33,6 +33,9 @@ var room_number = 10;
 //     }
 // }
 
+function random (low, high) {
+    return Math.random() * (high - low) + low;
+}
 
 exports.handler = function (event, context, callback) {
     var alexa = Alexa.handler(event, context);
@@ -63,8 +66,8 @@ var newSessionHandlers = {
         // }
         this.handler.state = states.MAINMODE;
         //this.emit(':ask', recipeArray);
-        this.emit(':ask', 'Werewolf game here. The game requires 6 players. Two werewolves, a doctor, a sear, and' +
-            'two villegers. To join the game, please enter the url. Please enter the room in on the webpage. The room number is' + room_number);
+        this.emit(':ask', 'Werewolf game here. The game requires 6 players. Two werewolves, a doctor, a seer, and' +
+            'two villegers. To join the game, please enter the url. Please enter the room on the webpage. The room number is' + room_number + ". say ready to begin the game.");
     },
     "AMAZON.StopIntent": function () {
         this.emit(':tell', "Goodbye!");
@@ -96,30 +99,30 @@ var mainHandlers = Alexa.CreateStateHandler(states.MAINMODE, {
             //gameArray['Started'] = true;
             this.attributes['state'] = "close";
             this.emit(':ask', 'Werewolf game started. It is night time. Everyone please close your eyes. ' +
-                'Say confirmed to move on');
-        } else if (user_res === "confirmed" && this.attributes['state'] === "close") {
+                'Say now confirm to move on');
+        } else if (user_res === "now confirm" && this.attributes['state'] === "close") {
             this.attributes['state'] = "kill";
             this.emit(':ask', 'Werewolves, open your eyes and recognize each other. Tap a villeger on the phone to kill')
-        } else if (user_res === "confirmed" && this.attributes['state'] === "kill" ) {
+        } else if (user_res === "now confirm" && this.attributes['state'] === "kill" ) {
             this.attributes['state'] = "heal";
             this.emit(':ask', 'Ok, Werewolves, close your eyes. Now, Doctor, open your eyes. Tap on any role on the phone to heal')
-        } else if (user_res === "confirmed" && this.attributes['state'] === "heal") {
+        } else if (user_res === "now confirm" && this.attributes['state'] === "heal") {
             this.attributes['state'] = "sear";
-            this.emit(':ask', 'Doctor, close your eyes. Sear, Open your eyes. Tap on the phone to see the role of another player');
-        } else if (user_res === "confirmed" && this.attributes['state'] === "sear" ) {
+            this.emit(':ask', 'Doctor, close your eyes. Seer, Open your eyes. Tap on the phone to see the role of another player');
+        } else if (user_res === "now confirm" && this.attributes['state'] === "sear" ) {
             this.attributes['state'] = "day";
             // Need to check the database and find out who is killed.
-            this.emit(':ask', 'Sear, close your eyes. Now everybody open your eyes. It is daytime. The player killed is displayed on your phone. Now, please introduce yourself in order. Dead player may not speak.'
+            this.emit(':ask', 'Seer, close your eyes. Now everybody open your eyes. It is daytime. The player killed is displayed on your phone. Now, please introduce yourself in order. Dead player may not speak.'
             + 'Each player has 3 mins to speak');
-        } else if (user_res === "confirmed" && this.attributes['state'] === "day") {
+        } else if (user_res === "now confirm" && this.attributes['state'] === "day") {
             this.attributes['state'] = "lynch";
             this.emit(':ask', 'Time is up! Everyone alive taps on the phone to lynch someone.');
-        } else if (user_res === "confirmed" && this.attributes['state'] === "lynch") {
+        } else if (user_res === "now confirm" && this.attributes['state'] === "lynch") {
             this.attributes['state'] = "night";
-            this.emit(':ask', 'person lynched is shown on phone. If there is not a majority vote, no one died. Say continue to move on.')
-        } else if (user_res === "continue" && this.attributes['state' === "night"]) {
+            this.emit(':ask', 'person lynched is shown on phone. If there is not a majority vote, no one died. Say now confirm to move on.')
+        } else if (user_res === "now confirm" && this.attributes['state'] === "night") {
             this.attributes['state'] = "close";
-            this.emit(':ask', 'It is night time. Everyone please close your eyes. Say confirmed to move on');
+            this.emit(':ask', 'It is night time. Everyone please close your eyes. Say now confirm to move on');
         } else {
             this.emit(':ask', 'sorry, room is not filled yet. Please make sure everyone has entered the room.')
         };
