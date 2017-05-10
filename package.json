@@ -5,6 +5,8 @@
   "dependencies": {
     "cors": "^2.8.3",
     "express": "^4.15.2",
+    "jQuery": "^1.7.4",
+    "jsdom": "^10.1.0",
     "socket.io": "^1.7.3"
   }
 }

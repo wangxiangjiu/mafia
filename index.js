@@ -3,6 +3,8 @@ var app = express();
 var cors = require('cors');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var najax = $ = require('najax');
+
 
 app.use(cors());
 app.use(express.static(__dirname));
@@ -11,6 +13,17 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/game.html');
 });
 
+// dummy dom
+
+
+
+
+// setInterval(function(){
+//   if (!dayLocked){
+//     dayLocked = true;
+
+//   }
+// })
 
 // app.use(function(req, res, next) {
 //   res.header("Access-Control-Allow-Origin", "*");
@@ -72,6 +85,10 @@ io.on('connection', function(socket){
       rooms[room].pc = 1; 
       rooms[room].max = max;
       rooms[room].players = [];
+      rooms[room].voteCount = 0; 
+      rooms[room].votes = {};
+      rooms[room].victim = -1;
+      rooms[room].playersLeft = 6;
       // later add logic for deciding how many roles
       rooms[room].remainingRoles = roles6.slice();
     } else {
@@ -94,7 +111,12 @@ io.on('connection', function(socket){
     }
     var otherPlayers = rooms[room].players.slice();
 
-    rooms[room].players.push([username, role]);
+    var player = {};
+    player.username = username;
+    player.role = role;
+    player.pid = pid;
+
+    rooms[room].players.push(player);
 
     var username = usernames[socket.id]
     io.in(socket.id).emit("welcome", "WELCOME TO ROOM: "+ room + " " + username);
@@ -111,8 +133,10 @@ io.on('connection', function(socket){
     // now roll the role?
     if (otherPlayers.length > 0){
       for(var j = 0; j < otherPlayers.length; j++){
-        playerData = otherPlayers[j];
-        io.in(socket.id).emit("update players", playerData);
+        var updateData = {};
+        updateData.other = otherPlayers[j];
+        updateData.celf = role;
+        io.in(socket.id).emit("update players", updateData);
       }  
     }
     
@@ -128,8 +152,78 @@ io.on('connection', function(socket){
     usernames[socket.id] = username;
   });
 
+  socket.on('suggest kill', function(data){
+    //broadcast to (not self) in room that you want to kill xyz
+    socket.broadcast.to(data.room).emit("suggested kill", data);
+  });
 
+
+  socket.on('werewolf confirm', function(data){
+    var room = data.room;
+    rooms[room].victim = data.victim;
+    socket.broadcast.to(room).emit("doctor message");  // allow doctor to do stuff..    
+  });
+
+  socket.on('doctor confirm', function(data){
+    var room = data.room;
+    var doctorSave = data.pid; 
+    if (doctorSave == rooms[data.room].victim){
+      rooms[room].victim *= -1;
+    } 
+    socket.broadcast.to(room).emit("seer message"); // allow seer to do stuff?
+  });
+
+  socket.on('seer confirm', function(data){
+    var newData = {};
+    newData.pid = data.pid;
+    io.in(socket.id).emit("seer show", newData);
+    var room = data.room 
+    newData.victim = rooms[room].victim;
+    // if dead -> YOU DIED SCREEN.. idk 
+    if (rooms[room].victim > 0){
+      rooms[room].playersLeft -=1;
+    }
+    rooms[room].voteCount = 0;
+    io.in(room).emit('day phase', newData);
+
+  });
+
+
+
+
+
+
+
+
+
+  socket.on('lynch confirm', function(data){
+    // if majority exists -> someone died
+    // when all votes are in, determine lynch
+    var room = data.room;
+    if (rooms[room].votes[data.choice]){
+      rooms[room].votes[data.choice] += 1;
+    } else {
+      rooms[room].votes[data.choice] = 1;
+    }
+    rooms[room].voteCount += 1;
+    lynched = -1;
+    if (rooms[room].voteCount == rooms[room].playersLeft){
+      Object.keys(rooms[room].votes).forEach(function(key){
+        if (rooms[room].votes[key] > (rooms[room].playersLeft/2)){
+          lynched = key;
+        }
+      })
+      rooms[room].votes = {};
+      data.lynched = lynched;
+      io.in(room).emit('night phase', data);
+    }
+  })
+  var nightPhase = false;
 });
+
+
+
+
 
 http.listen(3000, function(){
   console.log('listening on *:3000');
